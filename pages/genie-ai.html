@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genie AI Travel Copilot — TRIP GENIE</title>
+  <meta name="description" content="AI Travel Assistant for custom itineraries, smart packing checklists, budget estimators, and voice travel translation." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link active" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo"><div class="brand-logo-icon">🧞</div><span>TRIP GENIE</span></div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Maps</a>
+      <a href="genie-ai.html" class="drawer-link active"><i class="fas fa-magic"></i> AI Genie Planner</a>
+      <a href="emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a>
+      <a href="profile.html" class="drawer-link"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:2rem;">
+        
+        <!-- Left: Quick Smart Prompt Hub & Travel Voice Phrasebook -->
+        <div>
+          <div class="glass-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+              <div style="width:42px; height:42px; border-radius:50%; background:var(--grad-magic); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">✨</div>
+              <div>
+                <h3 style="font-size:1.2rem; font-weight:800;">Genie AI Assistant</h3>
+                <div style="font-size:0.8rem; color:var(--text-muted);"><span class="status-dot-green"></span> 24/7 Intelligent Travel Copilot</div>
+              </div>
+            </div>
+
+            <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+              Choose any instant travel query or type your custom questions on the right:
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('Plan a 3-day Goa trip')">
+                🌴 Plan 3-Day Goa Beach Itinerary
+              </button>
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('Plan a 4-day Manali trip')">
+                🏔️ 4-Day Manali Snow Adventure
+              </button>
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('Plan a Kerala trip')">
+                🌴 4-Day Kerala Backwaters & Munnar
+              </button>
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('What should I pack?')">
+                🎒 Smart Travel Packing Checklist
+              </button>
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('Travel budget hacks')">
+                💡 Travel Budget Estimator & Hacks
+              </button>
+              <button class="btn btn-secondary btn-full" style="text-align:left; justify-content:flex-start;" onclick="sendPageGeniePrompt('Emergency help')">
+                🚨 Emergency Protocol Guidance
+              </button>
+            </div>
+          </div>
+
+          <!-- Travel Translation Voice Assistant -->
+          <div class="glass-card" style="padding:1.5rem;">
+            <h4 style="font-size:1.1rem; font-weight:800; margin-bottom:0.75rem;"><i class="fas fa-volume-up" style="color:var(--primary-purple);"></i> Travel Voice Phrasebook</h4>
+            <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Tap speaker icon to hear pronunciation:</p>
+            
+            <div style="display:flex; flex-direction:column; gap:0.65rem;" id="phrasebookList">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Conversational Full-Page Chat Window -->
+        <div>
+          <div class="glass-card" style="padding:0; display:flex; flex-direction:column; height:680px; overflow:hidden;">
+            <div class="chat-header">
+              <div class="chat-header-info">
+                <div class="chat-avatar">🧞</div>
+                <div>
+                  <div class="chat-title">Genie AI Travel Copilot</div>
+                  <div class="chat-status"><span class="status-dot-green"></span> Online • Ready to craft your journey</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat messages stream -->
+            <div id="pageChatMessages" class="chat-messages-container" style="flex:1; padding:1.25rem;">
+              <div class="chat-msg chat-msg-bot">
+                ✨ Namaste & Hello! I'm your <strong>Genie AI</strong> Travel Copilot.<br/><br/>
+                Tell me where you want to travel, or select any of the smart prompt buttons on the left to generate detailed day-by-day itineraries, packing lists, and budget breakdowns.
+              </div>
+            </div>
+
+            <!-- Typing indicator container -->
+            <div id="pageChatTyping" style="display:none; padding:0.5rem 1.25rem;">
+              <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="chat-input-area" style="padding:1rem;">
+              <input type="text" id="pageChatInput" class="chat-input" placeholder="Ask anything (e.g. Best cafes in Manali, 3-day budget for Kerala)..." />
+              <button class="chat-send-btn" onclick="handlePageChatSend()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SOS Modals -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">Trigger sirens and transmit GPS coordinates to 112.</p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPhrasebook();
+      const input = document.getElementById('pageChatInput');
+      if (input) {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handlePageChatSend();
+        });
+      }
+    });
+
+    function renderPhrasebook() {
+      const container = document.getElementById('phrasebookList');
+      if (!container || !window.TRAVEL_PHRASES) return;
+
+      container.innerHTML = '';
+      window.TRAVEL_PHRASES.slice(0, 4).forEach(p => {
+        const div = document.createElement('div');
+        div.style.cssText = 'background:var(--bg-body); border-radius:var(--radius-md); padding:0.65rem 0.85rem; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700; font-size:0.85rem; color:var(--text-primary);">${p.en}</div>
+            <div style="font-size:0.78rem; color:var(--primary-purple);">${p.hi}</div>
+          </div>
+          <button style="width:30px; height:30px; border-radius:50%; background:var(--bg-surface); border:1px solid var(--border-color); display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="LanguageManager.speakText('${p.hi}', 'hi-IN')" title="Pronounce Phrase">
+            🔊
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function sendPageGeniePrompt(prompt) {
+      addPageUserMsg(prompt);
+      processPageBotResponse(prompt);
+    }
+
+    function handlePageChatSend() {
+      const input = document.getElementById('pageChatInput');
+      if (!input || !input.value.trim()) return;
+      const text = input.value.trim();
+      addPageUserMsg(text);
+      input.value = '';
+      processPageBotResponse(text);
+    }
+
+    function addPageUserMsg(text) {
+      const container = document.getElementById('pageChatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg chat-msg-user';
+      div.textContent = text;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function processPageBotResponse(query) {
+      const typing = document.getElementById('pageChatTyping');
+      if (typing) typing.style.display = 'block';
+
+      // 1) Try the real AI (cloud Gemini when online, else local Ollama).
+      //    askGenieAI is a global from js/chatbot.js (loaded before this script).
+      let aiReply = null;
+      try {
+        const reply = await askGenieAI(query);
+        if (typeof reply === 'string' && reply.trim()) aiReply = reply;
+      } catch (err) {
+        console.error('AI request failed on genie-ai page, falling back to knowledge base:', err);
+      }
+
+      if (aiReply) {
+        if (typing) typing.style.display = 'none';
+        appendPageBotMsg(aiReply, []);
+        return;
+      }
+
+      // 2) Knowledge-base fallback (keeps the page chat working offline)
+      const lower = query.toLowerCase();
+      let res = GenieChatbot.knowledgeBase.default;
+
+      if (lower.includes('goa')) res = GenieChatbot.knowledgeBase.goa;
+      else if (lower.includes('manali')) res = GenieChatbot.knowledgeBase.manali;
+      else if (lower.includes('kerala')) res = GenieChatbot.knowledgeBase.kerala;
+      else if (lower.includes('pack')) res = GenieChatbot.knowledgeBase.pack;
+      else if (lower.includes('budget')) res = GenieChatbot.knowledgeBase.budget;
+      else if (lower.includes('emergency')) res = GenieChatbot.knowledgeBase.emergency;
+
+      setTimeout(() => {
+        if (typing) typing.style.display = 'none';
+        appendPageBotMsg(res.text, res.actions || []);
+      }, 1000);
+    }
+
+    function appendPageBotMsg(text, actions = []) {
+      const container = document.getElementById('pageChatMessages');
+      if (!container) return;
+
+      const div = document.createElement('div');
+      div.className = 'chat-msg chat-msg-bot';
+
+      let formatted = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br/>');
+
+      let actionsHtml = '';
+      if (actions && actions.length > 0) {
+        actionsHtml = `<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">${actions.map(a => `<a href="${a.url}" class="btn btn-sm btn-primary" style="font-size:0.75rem; padding:4px 10px;">${a.label}</a>`).join('')}</div>`;
+      }
+
+      div.innerHTML = formatted + actionsHtml;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+  </script>
+</body>
+</html>

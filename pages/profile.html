@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile & Wallet — TRIP GENIE</title>
+  <meta name="description" content="Manage your travel profile, TRIP PAY digital wallet, saved payment methods, active insurance, and security preferences." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo"><div class="brand-logo-icon">🧞</div><span>TRIP GENIE</span></div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Maps</a>
+      <a href="genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie</a>
+      <a href="emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a>
+      <a href="profile.html" class="drawer-link active"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Profile Header Card -->
+      <div class="glass-card" style="padding:2.25rem; margin-bottom:2rem; background:linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(14,165,233,0.06) 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:80px; height:80px; border-radius:50%; background:var(--grad-primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:800; box-shadow:0 8px 24px rgba(124,58,237,0.35);">
+              👨‍💼
+            </div>
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <h1 id="profileUserName" style="font-size:1.8rem; font-weight:800;">Rahul Sharma</h1>
+                <span class="badge badge-success">✓ Verified Traveler</span>
+              </div>
+              <div style="font-size:0.88rem; color:var(--text-secondary); margin-top:2px;">
+                <i class="fas fa-envelope"></i> <span id="profileUserEmail">rahul.sharma@example.com</span> • <i class="fas fa-phone"></i> +91 98765 43210
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+                Member since Jan 2024 • Genie Tier: <strong>Platinum Explorer</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.75rem;">
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Profile editing is simulated. All demo details loaded!', 'info')">
+              <i class="fas fa-edit"></i> Edit Profile
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="logoutUser()">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid var(--border-color); margin:1.5rem 0;" />
+
+        <!-- Quick Stats Matrix -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
+          <div style="background:var(--bg-surface); padding:1rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">TRIP PAY Balance</div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--primary-purple);" class="wallet-balance-val">₹12,450</div>
+          </div>
+          <div style="background:var(--bg-surface); padding:1rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Completed Trips</div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--accent-sky);">14 Trips</div>
+          </div>
+          <div style="background:var(--bg-surface); padding:1rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Saved Wishlist</div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--sos-red);">8 Places</div>
+          </div>
+          <div style="background:var(--bg-surface); padding:1rem; border-radius:var(--radius-lg); border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Insurance Status</div>
+            <div style="font-size:1.5rem; font-weight:800; color:var(--accent-green);">₹5 Lakh Active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Grid Sections -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+        
+        <!-- Left: Payment Methods & Linked UPI -->
+        <div class="glass-card" style="padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="font-size:1.2rem; font-weight:800;"><i class="fas fa-credit-card" style="color:var(--primary-purple);"></i> Saved Payment Methods</h3>
+            <button class="btn btn-sm btn-primary" onclick="openPayModal('send')">Send Money</button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div style="background:var(--bg-body); border-radius:var(--radius-md); padding:0.85rem; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:1.5rem;">🏦</span>
+                <div>
+                  <div style="font-weight:700;">HDFC Bank **4921</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Primary UPI ID: rahul@okhdfcbank</div>
+                </div>
+              </div>
+              <span class="badge badge-success">Active</span>
+            </div>
+
+            <div style="background:var(--bg-body); border-radius:var(--radius-md); padding:0.85rem; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:1.5rem;">💳</span>
+                <div>
+                  <div style="font-weight:700;">ICICI Sapphiro Visa Signature</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted);">Expires 09/29 • Airport Lounge Enabled</div>
+                </div>
+              </div>
+              <span class="badge badge-info">Linked</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: App Settings & Preferences -->
+        <div class="glass-card" style="padding:1.5rem;">
+          <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:1rem;"><i class="fas fa-cog" style="color:var(--accent-sky);"></i> Preferences & Security</h3>
+
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:0.75rem; border-bottom:1px solid var(--border-color);">
+              <div>
+                <div style="font-weight:700;">Theme Mode</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Toggle dark or light theme interface</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="toggleTheme()">Switch Theme</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:0.75rem; border-bottom:1px solid var(--border-color);">
+              <div>
+                <div style="font-weight:700;">Emergency SOS Auto-Broadcast</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Send live GPS coordinates on SOS trigger</div>
+              </div>
+              <span class="badge badge-success">Enabled</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-weight:700;">Offline Mesh Mode</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Enable BLE peer discovery when offline</div>
+              </div>
+              <span class="badge badge-success">Active</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- TRIP PAY Modal -->
+  <div id="tripPayModal" class="modal-overlay" onclick="if(event.target===this) closePayModal()">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closePayModal()">✕</button>
+      <h3 id="payModalTitle" style="font-size:1.3rem; margin-bottom:1.25rem;">TRIP PAY</h3>
+      <div id="payModalBody"></div>
+    </div>
+  </div>
+
+  <!-- SOS Modals -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">Trigger sirens and transmit GPS coordinates to 112.</p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Floating Genie AI -->
+  <button id="floatingGenieBtn" class="floating-genie-btn"><span>✨</span> <span>Ask Genie</span></button>
+  <div id="genieChatWindow" class="genie-chat-window">
+    <div class="chat-header">
+      <div class="chat-header-info"><div class="chat-avatar">🧞</div><div><div class="chat-title">Genie AI Copilot</div><div class="chat-status"><span class="status-dot-green"></span> Online</div></div></div>
+      <button id="chatCloseBtn" class="chat-close-btn">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages-container"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask Genie AI..." />
+      <button id="chatSendBtn" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const u = window.getSessionUser ? window.getSessionUser() : null;
+      if (!u || !u.email) return;
+      const emailEl = document.getElementById('profileUserEmail');
+      const nameEl = document.getElementById('profileUserName');
+      if (emailEl) emailEl.textContent = u.email;
+      if (nameEl) {
+        const name = u.email.split('@')[0].replace(/[._-]+/g, ' ').trim();
+        nameEl.textContent = name.replace(/\b\w/g, c => c.toUpperCase());
+      }
+    });
+  </script>
+</body>
+</html>

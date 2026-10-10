@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRIP SOS — 24/7 Emergency Safety Hub</title>
+  <meta name="description" content="Instant Emergency SOS, 112 police dials, live GPS broadcast, sirens, and offline safety protocols." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+
+  <style>
+    .sos-big-button {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: var(--grad-sos);
+      color: #fff;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem auto;
+      box-shadow: 0 10px 40px rgba(239, 68, 68, 0.5);
+      border: 6px solid rgba(255, 255, 255, 0.8);
+      cursor: pointer;
+      animation: sosRadar 2s infinite;
+      transition: transform var(--transition-fast);
+    }
+    .sos-big-button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 15px 50px rgba(239, 68, 68, 0.7);
+    }
+    .emergency-active-banner {
+      display: none;
+      background: var(--sos-dark-red);
+      color: #fff;
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      animation: sosEmergencyFlash 1.5s infinite;
+      border: 2px solid #EF4444;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link active" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo"><div class="brand-logo-icon">🧞</div><span>TRIP GENIE</span></div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Maps</a>
+      <a href="genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie</a>
+      <a href="emergency.html" class="drawer-link active" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency SOS</a>
+      <a href="profile.html" class="drawer-link"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Active Emergency Banner (Shows when SOS is triggered) -->
+      <div id="emergencyActiveDashboard" class="emergency-active-banner">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem;">
+          <div>
+            <span class="badge" style="background:#fff; color:var(--sos-red); font-weight:800; margin-bottom:0.5rem;">🔴 EMERGENCY MODE ACTIVE</span>
+            <h2 style="font-size:2rem; font-weight:900; color:#fff;">Distress Signal Transmitting</h2>
+            <p style="color:#FECACA; font-size:0.95rem;">
+              Live GPS Coordinates: <strong id="emergencyGpsCoords">Locking GPS…</strong> • Broadcasted to 4 Contacts & Police
+              &nbsp;·&nbsp;<a id="emergencyMapLink" href="#" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline; font-weight:700;">View on map</a>
+            </p>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-secondary" style="background:#fff; color:var(--text-primary);" onclick="EmergencyEngine.toggleSiren()">
+              <i class="fas fa-volume-up"></i> Mute / Unmute Siren
+            </button>
+            <button class="btn btn-secondary" style="background:#0F172A; color:#fff;" onclick="EmergencyEngine.deactivateEmergencyMode()">
+              ✓ Stop SOS (I am Safe)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header & Main SOS Button -->
+      <div class="glass-card" style="text-align:center; padding:3rem 1.5rem; margin-bottom:2.5rem; background:linear-gradient(135deg, rgba(239,68,68,0.06) 0%, rgba(124,58,237,0.06) 100%);">
+        <span class="badge badge-danger" style="font-size:0.85rem; padding:0.4rem 1rem;">24/7 National Emergency Travel Hub</span>
+        <h1 style="font-size:2.8rem; font-weight:900; margin-top:0.5rem;">Emergency SOS Protection</h1>
+        <p style="color:var(--text-secondary); max-width:620px; margin:0 auto;">
+          Press the button below in any critical situation. It activates loud audio sirens, locks GPS coordinates, and alerts authorities and your family.
+        </p>
+
+        <!-- Huge SOS Button -->
+        <button class="sos-big-button" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:4px;"></i>
+          <span>SOS</span>
+        </button>
+
+        <p style="font-size:0.82rem; color:var(--text-muted);">
+          ⚠️ <em>Demo Simulation Mode — Prepared for College, Hackathon & Final Year Project Showcases.</em>
+        </p>
+      </div>
+
+      <!-- Quick Emergency Helplines Grid -->
+      <div style="margin-bottom:2.5rem;">
+        <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:1.25rem;">One-Tap National Helplines</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          
+          <div class="glass-card" style="padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.85rem;">
+              <span style="font-size:2rem;">🆘</span>
+              <div>
+                <div style="font-weight:800; font-size:1.1rem;">National SOS (112)</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Unified All-India Dispatch</div>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="EmergencyEngine.simulateCall('National Emergency 112', '112')">📞 Call</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.85rem;">
+              <span style="font-size:2rem;">👮‍♂️</span>
+              <div>
+                <div style="font-weight:800; font-size:1.1rem;">Police (100)</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Immediate Police Patrol</div>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="EmergencyEngine.simulateCall('Police Control Room', '100')">📞 Call</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.85rem;">
+              <span style="font-size:2rem;">🚑</span>
+              <div>
+                <div style="font-weight:800; font-size:1.1rem;">Ambulance (108)</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Emergency Medical Care</div>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="EmergencyEngine.simulateCall('Ambulance Trauma Desk', '108')">📞 Call</button>
+          </div>
+
+          <div class="glass-card" style="padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.85rem;">
+              <span style="font-size:2rem;">🛡️</span>
+              <div>
+                <div style="font-weight:800; font-size:1.1rem;">Women Safety (1091)</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">24x7 Dedicated Cell</div>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="EmergencyEngine.simulateCall('Women Safety Cell', '1091')">📞 Call</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Emergency Contacts Manager -->
+      <div class="glass-card" style="padding:2rem; margin-bottom:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="font-size:1.4rem; font-weight:800;">Emergency Contacts</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">These contacts receive instant SMS with your live GPS location when SOS triggers</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('addContactModal').classList.add('active')">
+            <i class="fas fa-user-plus"></i> Add Emergency Contact
+          </button>
+        </div>
+
+        <div id="emergencyContactsList"></div>
+      </div>
+
+      <!-- Offline First-Aid & Travel Emergency Guide -->
+      <div class="glass-card" style="padding:2rem;">
+        <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:1.25rem;">🏥 Offline Travel First-Aid Protocols</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem;">
+          
+          <div style="background:var(--bg-body); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-color);">
+            <div style="font-weight:800; margin-bottom:0.35rem; color:var(--text-primary);">☀️ Heatstroke & Dehydration</div>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">Move to shaded area immediately, sip cold water with ORS, and apply wet towels to neck and forehead.</p>
+          </div>
+
+          <div style="background:var(--bg-body); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-color);">
+            <div style="font-weight:800; margin-bottom:0.35rem; color:var(--text-primary);">🏔️ Altitude Sickness (AMS)</div>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">Descend immediately by 500-1000m, drink warm fluids, avoid alcohol, and breathe deeply.</p>
+          </div>
+
+          <div style="background:var(--bg-body); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-color);">
+            <div style="font-weight:800; margin-bottom:0.35rem; color:var(--text-primary);">🩹 Severe Bleeding & Cuts</div>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">Apply firm continuous pressure with clean cloth, elevate injured limb above heart, and do not remove embedded objects.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Contact Modal -->
+  <div id="addContactModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="document.getElementById('addContactModal').classList.remove('active')">✕</button>
+      <h3 style="font-size:1.3rem; margin-bottom:1rem;">Add Emergency Contact</h3>
+      <form onsubmit="handleNewContact(event)">
+        <div style="margin-bottom:1rem;">
+          <label class="input-label">Full Name</label>
+          <div class="input-field-wrapper"><input type="text" id="newContName" placeholder="e.g. Sister, Best Friend" required /></div>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="input-label">Relationship</label>
+          <div class="input-field-wrapper"><input type="text" id="newContRel" placeholder="e.g. Brother, Doctor" required /></div>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <label class="input-label">Mobile Number</label>
+          <div class="input-field-wrapper"><input type="tel" id="newContPhone" placeholder="+91 98765 00000" required /></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Save Contact</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SOS Confirmation Modal -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        Trigger sirens and transmit GPS coordinates to 112 and your contacts.
+      </p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS Countdown Modal -->
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/maps.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    function handleNewContact(e) {
+      e.preventDefault();
+      const name = document.getElementById('newContName').value;
+      const rel = document.getElementById('newContRel').value;
+      const phone = document.getElementById('newContPhone').value;
+
+      EmergencyEngine.addContact(name, rel, phone);
+      document.getElementById('addContactModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

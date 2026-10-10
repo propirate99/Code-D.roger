@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRIP GENIE — Your Journey. One Smart Genie.</title>
+  <meta name="description" content="All-in-one travel super application combining digital payments, flight/hotel booking, food discovery, rides, offline maps, and AI travel assistance." />
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <style>
+    @media (max-width: 768px) {
+      .hero-cta-row { flex-direction: column !important; }
+      .hero-cta-row .btn { width: 100% !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <!-- Left: Mobile Toggle & Logo -->
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()" aria-label="Open Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a href="index.html" class="brand-logo">
+          <div class="brand-logo-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L19 21L12 17L5 21L12 2Z"></path>
+              <circle cx="12" cy="7" r="1.5" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <!-- Center: Main Navigation Links -->
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active"><i class="fas fa-home"></i> <span data-i18n="quick_services">Home</span></a></li>
+        <li><a href="pages/explore.html" class="nav-link"><i class="fas fa-compass"></i> <span data-i18n="explore">Explore</span></a></li>
+        <li><a href="pages/trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> <span data-i18n="my_trip">My Trip</span></a></li>
+        <li><a href="pages/bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> <span data-i18n="my_bookings">Bookings</span></a></li>
+        <li><a href="pages/services.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Services</span></a></li>
+        <li><a href="pages/maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> <span data-i18n="maps">Maps</span></a></li>
+        <li><a href="pages/genie-ai.html" class="nav-link" style="color:var(--primary-purple); font-weight:700;"><i class="fas fa-magic"></i> <span>AI Genie</span></a></li>
+        <li><a href="pages/emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> <span>Emergency</span></a></li>
+      </ul>
+
+      <!-- Right: Search, Language, Theme, SOS, Profile -->
+      <div class="nav-actions">
+        <!-- Global Search Trigger -->
+        <button class="nav-icon-btn" onclick="openGlobalSearch()" title="Search Destinations & Services (Ctrl+K)">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <!-- Multi-Language Selector -->
+        <div class="lang-dropdown-wrapper">
+          <button class="lang-btn" onclick="document.getElementById('langDropdownMenu').classList.toggle('active')">
+            <i class="fas fa-globe"></i>
+            <span id="currentLangLabel">English</span>
+            <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+          </button>
+          <div id="langDropdownMenu" class="dropdown-menu">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); padding:4px 8px; text-transform:uppercase;">Select Language</div>
+            <div id="langDropdownList"></div>
+          </div>
+        </div>
+
+        <!-- Dark/Light Mode Switcher -->
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+          🌙
+        </button>
+
+        <!-- Notification Bell -->
+        <div style="position:relative;">
+          <button class="nav-icon-btn" onclick="document.getElementById('notificationDropdown').classList.toggle('active')">
+            <i class="fas fa-bell"></i>
+            <span id="notificationBadge" class="nav-badge">3</span>
+          </button>
+          <div id="notificationDropdown" class="dropdown-menu" style="width:320px; padding:0;">
+            <div style="padding:0.85rem 1rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; font-size:0.95rem;">Notifications</span>
+              <button onclick="markAllNotificationsRead()" style="font-size:0.75rem; color:var(--primary-purple); font-weight:600; cursor:pointer;">Mark all read</button>
+            </div>
+            <div id="notificationList" style="max-height:280px; overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <!-- Profile Link -->
+        <a href="pages/profile.html" class="nav-icon-btn" title="My Profile">
+          <i class="fas fa-user"></i>
+        </a>
+
+        <!-- Permanent SOS Trigger Button -->
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>SOS</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================= MOBILE NAVIGATION DRAWER ================= -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo" style="font-size:1.2rem;">
+        <div class="brand-logo-icon" style="width:34px; height:34px;">🧞</div>
+        <span>TRIP GENIE</span>
+      </div>
+      <button onclick="toggleMobileDrawer()" style="font-size:1.2rem; color:var(--text-muted);">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="index.html" class="drawer-link active"><i class="fas fa-home"></i> Home</a>
+      <a href="pages/explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="pages/trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="pages/bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="pages/services.html" class="drawer-link"><i class="fas fa-th-large"></i> All Services</a>
+      <a href="pages/maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Offline Maps & GPS</a>
+      <a href="pages/genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie Planner</a>
+      <a href="pages/emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency SOS Hub</a>
+      <a href="pages/profile.html" class="drawer-link"><i class="fas fa-user-circle"></i> Profile & Wallet</a>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+    
+    <!-- --- HERO SECTION --- -->
+    <section class="hero-section">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+      <div class="container">
+        
+        <div class="hero-content">
+          <div class="hero-pill">
+            <span>✦</span> <span>Your Journey. One Smart Companion.</span>
+          </div>
+          <h1 class="hero-title">
+            <span>Travel smarter.</span> <span class="gradient-text">Stay safer.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Your AI-powered companion for planning, exploring, paying, navigating and staying safe across India.
+          </p>
+          <div class="hero-cta-row">
+            <a class="btn btn-primary btn-lg" href="pages/genie-ai.html">
+              <i class="fas fa-wand-magic-sparkles"></i> Plan My Trip
+            </a>
+            <button class="btn btn-secondary btn-lg" type="button" onclick="GenieChatbot.toggleChat(true)">
+              <i class="fas fa-comment-dots"></i> Ask Genie AI
+            </button>
+            <button class="btn btn-danger btn-lg" type="button" onclick="EmergencyEngine.triggerSOSModal()">
+              <i class="fas fa-shield-heart"></i> Emergency SOS
+            </button>
+          </div>
+        </div>
+
+        <!-- Hero Destination Search Card -->
+        <div class="hero-search-card">
+          <div class="search-tabs">
+            <button class="search-tab active"><i class="fas fa-plane"></i> Flights</button>
+            <button class="search-tab" onclick="window.location.href='pages/services.html#stays'"><i class="fas fa-hotel"></i> Stays</button>
+            <button class="search-tab" onclick="window.location.href='pages/services.html#rides'"><i class="fas fa-taxi"></i> Cabs</button>
+            <button class="search-tab" onclick="window.location.href='pages/services.html#food'"><i class="fas fa-utensils"></i> Food</button>
+            <button class="search-tab" onclick="window.location.href='pages/services.html#entertainment'"><i class="fas fa-film"></i> Movies</button>
+          </div>
+
+          <form onsubmit="handleHeroSearch(event)">
+            <div class="search-form-grid">
+              <!-- Destination -->
+              <div class="input-group">
+                <label class="input-label" data-i18n="dest_label">Destination</label>
+                <div class="input-field-wrapper">
+                  <i class="fas fa-map-marker-alt" style="color:var(--primary-purple);"></i>
+                  <input type="text" id="heroDestInput" placeholder="Mysore, Goa, Kerala, Jaipur..." value="Mysore, India" required />
+                </div>
+              </div>
+
+              <!-- Departure Date -->
+              <div class="input-group">
+                <label class="input-label" data-i18n="dep_label">Departure Date</label>
+                <div class="input-field-wrapper">
+                  <i class="fas fa-calendar-alt" style="color:var(--accent-sky);"></i>
+                  <input type="date" id="heroDepDate" value="2026-10-15" />
+                </div>
+              </div>
+
+              <!-- Return Date -->
+              <div class="input-group">
+                <label class="input-label" data-i18n="ret_label">Return Date</label>
+                <div class="input-field-wrapper">
+                  <i class="fas fa-calendar-check" style="color:var(--accent-green);"></i>
+                  <input type="date" id="heroRetDate" value="2026-10-19" />
+                </div>
+              </div>
+
+              <!-- Travelers -->
+              <div class="input-group">
+                <label class="input-label" data-i18n="trav_label">Travelers</label>
+                <div class="input-field-wrapper">
+                  <i class="fas fa-user-friends" style="color:var(--accent-amber);"></i>
+                  <select id="heroTravelers">
+                    <option>1 Adult</option>
+                    <option selected>2 Adults</option>
+                    <option>2 Adults, 1 Child</option>
+                    <option>Family (4+ Guests)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="hero-search-actions">
+                <button type="submit" class="btn btn-primary" style="height:48px;">
+                  <i class="fas fa-search"></i>
+                  <span data-i18n="search_btn">Search</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div style="margin-top:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-muted);">
+              <span>⚡ Trending:</span>
+              <button onclick="setHeroDest('Goa')" class="badge badge-primary" style="cursor:pointer;">Goa</button>
+              <button onclick="setHeroDest('Manali')" class="badge badge-primary" style="cursor:pointer;">Manali</button>
+              <button onclick="setHeroDest('Kerala')" class="badge badge-primary" style="cursor:pointer;">Kerala</button>
+              <button onclick="setHeroDest('Kashmir')" class="badge badge-primary" style="cursor:pointer;">Kashmir</button>
+              <button onclick="setHeroDest('Mysore')" class="badge badge-primary" style="cursor:pointer;">Mysore</button>
+            </div>
+            <button class="btn btn-accent btn-sm" onclick="GenieChatbot.toggleChat(true); GenieChatbot.sendQuickPrompt('Plan a 3-day trip to Goa');">
+              <span>✨ Plan with Genie AI</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- --- QUICK SERVICES DASHBOARD --- -->
+    <section class="services-section">
+      <div class="container">
+        
+        <div class="section-header">
+          <div>
+            <h2 class="section-title" data-i18n="quick_services">Quick Services</h2>
+            <p class="section-subtitle" data-i18n="quick_sub">Everything you need in one unified travel hub</p>
+          </div>
+          <a href="pages/services.html" class="btn btn-secondary btn-sm">
+            <span>View All Services</span> <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="quick-services-grid">
+          <!-- 1. Digital Pay -->
+          <a href="pages/services.html#pay" class="service-card srv-pay">
+            <div class="service-icon-box"><i class="fas fa-wallet"></i></div>
+            <h3 class="service-title" data-i18n="digital_pay">Digital Pay</h3>
+            <p class="service-desc" data-i18n="digital_pay_sub">UPI • Recharge • Bills</p>
+            <div class="service-tags">
+              <span class="service-tag">Instant UPI</span>
+              <span class="service-tag">₹12,450 Bal</span>
+            </div>
+          </a>
+
+          <!-- 2. Travel Booking -->
+          <a href="pages/services.html#travel" class="service-card srv-travel">
+            <div class="service-icon-box"><i class="fas fa-plane-departure"></i></div>
+            <h3 class="service-title" data-i18n="travel_booking">Travel</h3>
+            <p class="service-desc" data-i18n="travel_sub">Flights • Trains • Bus</p>
+            <div class="service-tags">
+              <span class="service-tag">Zero Convenience</span>
+              <span class="service-tag">Live Status</span>
+            </div>
+          </a>
+
+          <!-- 3. Hotels & Stays -->
+          <a href="pages/services.html#stays" class="service-card srv-hotel">
+            <div class="service-icon-box"><i class="fas fa-hotel"></i></div>
+            <h3 class="service-title" data-i18n="hotels_stays">Hotels & Stays</h3>
+            <p class="service-desc" data-i18n="hotels_sub">Hotels • Villas • Homestays</p>
+            <div class="service-tags">
+              <span class="service-tag">Free Breakfast</span>
+              <span class="service-tag">Pool Access</span>
+            </div>
+          </a>
+
+          <!-- 4. Rides -->
+          <a href="pages/services.html#rides" class="service-card srv-rides">
+            <div class="service-icon-box"><i class="fas fa-car-side"></i></div>
+            <h3 class="service-title" data-i18n="rides">Rides</h3>
+            <p class="service-desc" data-i18n="rides_sub">Bike • Auto • Cab</p>
+            <div class="service-tags">
+              <span class="service-tag">3 mins away</span>
+              <span class="service-tag">Live Tracking</span>
+            </div>
+          </a>
+
+          <!-- 5. Food Discovery -->
+          <a href="pages/services.html#food" class="service-card srv-food">
+            <div class="service-icon-box"><i class="fas fa-utensils"></i></div>
+            <h3 class="service-title" data-i18n="food">Food Discovery</h3>
+            <p class="service-desc" data-i18n="food_sub">Restaurants • Delivery</p>
+            <div class="service-tags">
+              <span class="service-tag">25 min Delivery</span>
+              <span class="service-tag">Local Delicacies</span>
+            </div>
+          </a>
+
+          <!-- 6. Entertainment -->
+          <a href="pages/services.html#entertainment" class="service-card srv-movies">
+            <div class="service-icon-box"><i class="fas fa-ticket-alt"></i></div>
+            <h3 class="service-title" data-i18n="entertainment">Entertainment</h3>
+            <p class="service-desc" data-i18n="entertainment_sub">Movies • Events • Concerts</p>
+            <div class="service-tags">
+              <span class="service-tag">IMAX 3D</span>
+              <span class="service-tag">Select Seats</span>
+            </div>
+          </a>
+
+          <!-- 7. Offline Maps & GPS -->
+          <a href="pages/maps.html" class="service-card srv-maps">
+            <div class="service-icon-box"><i class="fas fa-map-marked-alt"></i></div>
+            <h3 class="service-title" data-i18n="maps">Maps & GPS</h3>
+            <p class="service-desc" data-i18n="maps_sub">GPS • Offline Navigation</p>
+            <div class="service-tags">
+              <span class="service-tag">Live Coords</span>
+              <span class="service-tag">Offline Packs</span>
+            </div>
+          </a>
+
+          <!-- 8. Emergency SOS -->
+          <a href="pages/emergency.html" class="service-card srv-sos">
+            <div class="service-icon-box"><i class="fas fa-shield-alt"></i></div>
+            <h3 class="service-title" data-i18n="emergency_sos">Emergency SOS</h3>
+            <p class="service-desc" data-i18n="emergency_sub">24/7 SOS • Contacts • Siren</p>
+            <div class="service-tags">
+              <span class="service-tag">Instant Dial</span>
+              <span class="service-tag">Mesh Alert</span>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- --- TRIP PAY BANNER DASHBOARD --- -->
+    <section class="container" style="margin-bottom:3.5rem;">
+      <div class="trip-pay-banner">
+        <div>
+          <div class="pay-balance-badge">
+            <i class="fas fa-shield-alt" style="color:var(--accent-green);"></i>
+            <span>TRIP PAY • Secure Digital Wallet</span>
+          </div>
+          <div class="pay-balance-amount wallet-balance-val">₹12,450</div>
+          <p style="color:#CBD5E1; font-size:0.95rem; margin-bottom:1.5rem;">
+            Instant zero-fee travel payments, contactless UPI, bill settlements, and guaranteed cashback on every booking.
+          </p>
+          <div class="pay-actions-row">
+            <button class="btn btn-primary" onclick="openPayModal('send')">
+              <i class="fas fa-paper-plane"></i> <span data-i18n="send_money">Send Money</span>
+            </button>
+            <button class="btn btn-secondary" style="color:#fff; border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08);" onclick="openPayModal('qr')">
+              <i class="fas fa-qrcode"></i> <span data-i18n="scan_qr">Scan & Pay</span>
+            </button>
+            <button class="btn btn-secondary" style="color:#fff; border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.08);" onclick="openPayModal('recharge')">
+              <i class="fas fa-mobile-alt"></i> <span>Recharge</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pay-quick-grid">
+          <div class="pay-icon-item" onclick="openPayModal('send')">
+            <div class="pay-icon-circle">💸</div>
+            <div class="pay-icon-label">To UPI ID</div>
+          </div>
+          <div class="pay-icon-item" onclick="openPayModal('recharge')">
+            <div class="pay-icon-circle">⚡</div>
+            <div class="pay-icon-label">Electricity</div>
+          </div>
+          <div class="pay-icon-item" onclick="openPayModal('recharge')">
+            <div class="pay-icon-circle">📱</div>
+            <div class="pay-icon-label">Mobile Bill</div>
+          </div>
+          <div class="pay-icon-item" onclick="window.location.href='pages/services.html#protect'">
+            <div class="pay-icon-circle">🛡️</div>
+            <div class="pay-icon-label">Insurance</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- --- FEATURED DESTINATIONS --- -->
+    <section class="container" style="margin-bottom:4rem;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Popular Destinations</h2>
+          <p class="section-subtitle">Handpicked escapes with full itineraries & instant bookings</p>
+        </div>
+        <a href="pages/explore.html" class="btn btn-secondary btn-sm">Explore More</a>
+      </div>
+
+      <div class="destinations-grid" id="featuredDestinationsGrid">
+        <!-- Rendered dynamically from window.TRIP_GENIE_DATA -->
+      </div>
+    </section>
+
+    <!-- --- TRIP CONNECT OFFLINE MESH PREVIEW --- -->
+    <section class="container" style="margin-bottom:4rem;">
+      <div class="glass-card" style="padding:2rem; background:linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+          <div style="max-width:600px;">
+            <span class="badge badge-info" style="margin-bottom:0.75rem;">📡 TRIP CONNECT • OFFLINE MESH</span>
+            <h3 style="font-size:1.6rem; font-weight:800; margin-bottom:0.5rem;">Communicate with Nearby Travelers Without Internet</h3>
+            <p style="color:var(--text-secondary); font-size:0.95rem;">
+              Simulated Bluetooth & Wi-Fi Direct mesh networking allows direct messaging, SOS distress broadcast, and location beacons in remote valleys or flights.
+            </p>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <a href="pages/maps.html" class="btn btn-primary">
+              <span>View Radar Map</span> <i class="fas fa-radar"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FLOATING GENIE AI BUTTON & CHAT ================= -->
+  <button id="floatingGenieBtn" class="floating-genie-btn" aria-label="Ask Genie AI">
+    <span>✨</span>
+    <span>Ask Genie</span>
+  </button>
+
+  <div id="genieChatWindow" class="genie-chat-window">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">🧞</div>
+        <div>
+          <div class="chat-title">Genie AI Travel Copilot</div>
+          <div class="chat-status"><span class="status-dot-green"></span> Online • 24/7 Instant Help</div>
+        </div>
+      </div>
+      <button id="chatCloseBtn" class="chat-close-btn" aria-label="Close Chat">✕</button>
+    </div>
+
+    <!-- Messages list -->
+    <div id="chatMessages" class="chat-messages-container"></div>
+
+    <!-- Quick prompt suggestions -->
+    <div class="chat-quick-prompts">
+      <button class="quick-prompt-chip" onclick="GenieChatbot.sendQuickPrompt('Plan a 3-day Goa trip')">🌴 3-day Goa trip</button>
+      <button class="quick-prompt-chip" onclick="GenieChatbot.sendQuickPrompt('What should I pack?')">🎒 Packing list</button>
+      <button class="quick-prompt-chip" onclick="GenieChatbot.sendQuickPrompt('Travel budget hacks')">💰 Budget hacks</button>
+      <button class="quick-prompt-chip" onclick="GenieChatbot.sendQuickPrompt('Emergency help')">🚨 Emergency help</button>
+    </div>
+
+    <!-- Input Box -->
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask anything (e.g. Plan Kerala trip)..." />
+      <button id="chatSendBtn" class="chat-send-btn" aria-label="Send Message"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE BOTTOM NAVIGATION ================= -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="index.html" class="mobile-nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="pages/explore.html" class="mobile-nav-item">
+        <i class="fas fa-compass"></i>
+        <span>Explore</span>
+      </a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>SOS</span>
+      </button>
+      <a href="pages/trips.html" class="mobile-nav-item">
+        <i class="fas fa-suitcase-rolling"></i>
+        <span>My Trip</span>
+      </a>
+      <a href="pages/profile.html" class="mobile-nav-item">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ================= GLOBAL MODALS ================= -->
+
+  <!-- 1. Global Search Modal (Ctrl+K) -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search destinations, hotels, rides, food, movies..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- 2. TRIP PAY Modal -->
+  <div id="tripPayModal" class="modal-overlay" onclick="if(event.target===this) closePayModal()">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closePayModal()">✕</button>
+      <h3 id="payModalTitle" style="font-size:1.3rem; margin-bottom:1.25rem;">TRIP PAY</h3>
+      <div id="payModalBody"></div>
+    </div>
+  </div>
+
+  <!-- 3. Payment Success Modal -->
+  <div id="paymentSuccessModal" class="modal-overlay" onclick="if(event.target===this) closePaymentSuccessModal()">
+    <div class="modal-card" style="text-align:center; max-width:460px;">
+      <div style="width:80px; height:80px; margin:0 auto 1.25rem;">
+        <svg viewBox="0 0 52 52" style="width:100%; height:100%;">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      <h2 style="font-size:1.6rem; font-weight:800; color:var(--accent-green); margin-bottom:0.25rem;">Payment Successful ✓</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">TRIP PAY Digital Transaction Verified</p>
+      
+      <div style="background:var(--bg-body); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-color); text-align:left; font-size:0.9rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Amount Paid:</span>
+          <strong id="successPayAmount" style="font-size:1.15rem; color:var(--text-primary);">₹0</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+          <span style="color:var(--text-muted);">Paid To:</span>
+          <strong id="successPayRecipient">Merchant</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted);">Transaction ID:</span>
+          <span id="successPayTxnId" style="font-family:monospace; font-weight:700;">TXN-0000</span>
+        </div>
+      </div>
+
+      <div id="successPayReward"></div>
+
+      <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="closePaymentSuccessModal()">
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. SOS Confirmation Modal -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        This will trigger emergency distress sirens, broadcast your live GPS coordinates to your saved contacts, and prepare quick dials to 112 / Police.
+      </p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">
+          <strong>Activate SOS</strong>
+        </button>
+      </div>
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-top:1rem;">Demo Simulation • No real police calls placed</div>
+    </div>
+  </div>
+
+  <!-- 5. SOS 3-Second Abort Countdown Modal -->
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red); background:var(--bg-surface);">
+      <h3 style="color:var(--sos-red); font-size:1.2rem; margin-bottom:1rem;">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; font-family:var(--font-heading); color:var(--sos-red); line-height:1; margin-bottom:1.5rem;">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">
+        🛑 Cancel SOS (Abort)
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. E-Ticket / Confirmation Modal -->
+  <div id="eTicketModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card" style="max-width:540px;">
+      <button class="modal-close-btn" onclick="document.getElementById('eTicketModal').classList.remove('active')">✕</button>
+      <div id="eTicketBody"></div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="genie-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo" style="color:#fff;">
+            <div class="brand-logo-icon">🧞</div>
+            <span style="color:#fff;">TRIP GENIE</span>
+          </div>
+          <p>"Plan. Travel. Explore. Stay Safe."</p>
+          <p style="font-size:0.85rem; color:#94A3B8;">
+            India's unified travel super application combining digital payments, transport bookings, stays, food discovery, movies, offline maps, and AI assistance.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="pages/services.html#pay">TRIP PAY</a></li>
+            <li><a href="pages/services.html#travel">Flight Booking</a></li>
+            <li><a href="pages/services.html#stays">Hotels & Stays</a></li>
+            <li><a href="pages/services.html#rides">Genie Cabs</a></li>
+            <li><a href="pages/services.html#food">Food Delivery</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Safety & Tools</h4>
+          <ul class="footer-links">
+            <li><a href="pages/emergency.html">Emergency SOS</a></li>
+            <li><a href="pages/maps.html">TRIP MAP & GPS</a></li>
+            <li><a href="pages/services.html#protect">Travel Protect</a></li>
+            <li><a href="pages/genie-ai.html">Genie AI Planner</a></li>
+            <li><a href="pages/bookings.html">My Bookings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links">
+            <li><a href="pages/explore.html?cat=Beaches">Beach Vacations</a></li>
+            <li><a href="pages/explore.html?cat=Mountains">Himalayan Hills</a></li>
+            <li><a href="pages/explore.html?cat=Historical">Heritage Forts</a></li>
+            <li><a href="pages/explore.html?cat=Adventure">Adventure Sports</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Need Quick Help?</h4>
+          <p style="color:#94A3B8; font-size:0.85rem; margin-bottom:1rem;">Our AI Genie Assistant is ready 24/7 to plan your next journey.</p>
+          <button class="btn btn-accent btn-sm" onclick="GenieChatbot.toggleChat(true)">
+            <span>✨ Ask Genie AI</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 TRIP GENIE. All rights reserved. "Your Journey. One Genie."</div>
+        <div class="demo-disclaimer-pill">
+          ⚠️ FRONTEND DEMO ONLY — No real monetary charges or real emergency dials
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/mock-data.js?v=20260902"></script>
+  <script src="js/language.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/emergency.js"></script>
+  <script src="js/bookings.js"></script>
+  
+  <script>
+    // Home Page Initializer
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFeaturedDestinations();
+    });
+
+    function renderFeaturedDestinations() {
+      const grid = document.getElementById('featuredDestinationsGrid');
+      if (!grid || !window.TRIP_GENIE_DATA) return;
+
+      grid.innerHTML = '';
+      const featured = [
+        window.TRIP_GENIE_DATA.destinations.find(d => d.id === 'dest-mysore'),
+        ...window.TRIP_GENIE_DATA.destinations.filter(d => d.id !== 'dest-mysore')
+      ].filter(Boolean).slice(0, 5);
+
+      featured.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'dest-card';
+        card.innerHTML = `
+          <div class="dest-img-box">
+            <img src="${d.image}" alt="${d.name}" loading="lazy" />
+            <div class="dest-badge-top">${d.tag}</div>
+            <button class="dest-fav-btn" onclick="toggleFav(event, this)" aria-label="Favorite"><i class="fas fa-heart"></i></button>
+          </div>
+          <div class="dest-body">
+            <div class="dest-meta">
+              <h3 class="dest-title">${d.name}</h3>
+              <div class="dest-rating">⭐ ${d.rating}</div>
+            </div>
+            <p class="dest-desc">${d.description}</p>
+            <div class="dest-footer">
+              <div class="dest-price">₹${d.startingPrice.toLocaleString('en-IN')} <span>/ person</span></div>
+              <a href="pages/explore.html?dest=${d.id}" class="btn btn-primary btn-sm">Explore</a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleFav(e, btn) {
+      e.stopPropagation();
+      btn.classList.toggle('active');
+      if (window.showToast) {
+        window.showToast(btn.classList.contains('active') ? 'Saved to Wishlist ❤️' : 'Removed from Wishlist', 'info');
+      }
+    }
+
+    function setHeroDest(val) {
+      const input = document.getElementById('heroDestInput');
+      if (input) input.value = val;
+    }
+
+    function handleHeroSearch(e) {
+      e.preventDefault();
+      const dest = document.getElementById('heroDestInput').value;
+      window.location.href = `pages/explore.html?search=${encodeURIComponent(dest)}`;
+    }
+  </script>
+</body>
+</html>

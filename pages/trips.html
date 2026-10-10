@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Trip Itinerary — TRIP GENIE</title>
+  <meta name="description" content="Unified trip itinerary dashboard, day-by-day travel timeline, packing checklist, and budget tracker." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+
+  <style>
+    .timeline-container {
+      position: relative;
+      padding-left: 2rem;
+      margin-left: 1rem;
+      border-left: 2px solid var(--border-color);
+    }
+    .timeline-node {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: calc(-2rem - 9px);
+      top: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-purple);
+      border: 3px solid var(--bg-surface);
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+    }
+    .timeline-day-header {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-purple);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .timeline-activity-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all var(--transition-fast);
+    }
+    .timeline-activity-card:hover {
+      transform: translateX(4px);
+      border-color: var(--primary-purple);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link active"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo"><div class="brand-logo-icon">🧞</div><span>TRIP GENIE</span></div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link active"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Maps</a>
+      <a href="genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie</a>
+      <a href="emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a>
+      <a href="profile.html" class="drawer-link"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Trip Hero Banner -->
+      <div class="glass-card" style="padding:2rem; background:linear-gradient(135deg, rgba(30,64,175,0.08) 0%, rgba(124,58,237,0.08) 100%); margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem;">
+          <div>
+            <span class="badge badge-primary" style="margin-bottom:0.5rem;">🏖️ ACTIVE TRIP ITINERARY</span>
+            <h1 style="font-size:2.2rem; font-weight:900;">Goa Coastal Adventure</h1>
+            <p style="color:var(--text-secondary); margin-top:0.25rem;">
+              📅 <strong>15 Oct – 19 Oct 2026</strong> (5 Days, 4 Nights) • 👥 <strong>2 Adults</strong>
+            </p>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a href="maps.html" class="btn btn-secondary btn-sm"><i class="fas fa-map-marked-alt"></i> Open Trip Map</a>
+            <button class="btn btn-accent btn-sm" onclick="GenieChatbot.toggleChat(true); GenieChatbot.sendQuickPrompt('Suggest top evening activities for Day 2 in Goa');">
+              <span>✨ Ask Genie AI</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openAddActivityModal()">
+              <i class="fas fa-plus"></i> Add Activity
+            </button>
+          </div>
+        </div>
+
+        <!-- Connected Services Badges -->
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-color);">
+          <a href="bookings.html" class="service-tag" style="background:var(--bg-surface);"><i class="fas fa-plane"></i> Flight: IndiGo 6E-2044</a>
+          <a href="bookings.html" class="service-tag" style="background:var(--bg-surface);"><i class="fas fa-hotel"></i> Stay: Ocean Pearl Resort</a>
+          <a href="bookings.html" class="service-tag" style="background:var(--bg-surface);"><i class="fas fa-taxi"></i> Ride: Prime Dzire (GA-03)</a>
+          <a href="services.html#protect" class="service-tag" style="background:var(--bg-surface);"><i class="fas fa-shield-alt"></i> Insurance: ₹5 Lakh Cover</a>
+        </div>
+      </div>
+
+      <!-- Live GPS Location Card -->
+      <div class="glass-card" id="liveLocationCard" style="padding:1.25rem 1.5rem; margin-bottom:2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="badge badge-info">📍 LIVE GPS TELEMETRY</span>
+          <h3 style="font-size:1.2rem; font-weight:800; margin-top:0.25rem;">Your Current Location</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted);">
+            Coordinates: <strong id="tripLiveCoords" style="font-family:monospace; color:var(--primary-purple);">Locating…</strong>
+            &nbsp;•&nbsp; <span id="tripDistanceToDest">Distance to Goa destination: —</span>
+          </p>
+        </div>
+        <a href="maps.html" class="btn btn-secondary btn-sm">🗺️ Open Trip Map</a>
+      </div>
+
+      <!-- Grid Layout: Timeline on Left, Widgets on Right -->
+      <div style="display:grid; grid-template-columns:1.8fr 1.2fr; gap:2rem;">
+        
+        <!-- Left: Day-by-Day Timeline -->
+        <div>
+          <h3 style="font-size:1.4rem; font-weight:800; margin-bottom:1.5rem;">Trip Schedule & Timeline</h3>
+
+          <div class="timeline-container">
+            
+            <!-- Day 1 -->
+            <div class="timeline-node">
+              <div class="timeline-dot"></div>
+              <div class="timeline-day-header">
+                <span>Day 1 • Arrival & Beach Sunset</span>
+                <span class="badge badge-primary" style="font-size:0.7rem;">15 Oct</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">✈️</span>
+                  <div>
+                    <div style="font-weight:700;">Flight Arrival at Dabolim (DEL → GOI)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">06:30 AM – 09:05 AM • Terminal 3</div>
+                  </div>
+                </div>
+                <span class="badge badge-success">Confirmed</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🏨</span>
+                  <div>
+                    <div style="font-weight:700;">Hotel Check-in at Ocean Pearl Resort</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">02:00 PM • Room 304 (Deluxe View)</div>
+                  </div>
+                </div>
+                <span class="badge badge-success">Ready</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🍜</span>
+                  <div>
+                    <div style="font-weight:700;">Dinner at Coastal Spice Seafood Shack</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">08:30 PM • Authentic Goan Curry</div>
+                  </div>
+                </div>
+                <span class="badge badge-info">Planned</span>
+              </div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="timeline-node">
+              <div class="timeline-dot"></div>
+              <div class="timeline-day-header">
+                <span>Day 2 • Beach Watersports & Fort Aguada</span>
+                <span class="badge badge-primary" style="font-size:0.7rem;">16 Oct</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🏖️</span>
+                  <div>
+                    <div style="font-weight:700;">Baga Beach Parasailing & Jet Ski</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">10:00 AM • Water Sports Zone</div>
+                  </div>
+                </div>
+                <span class="badge badge-info">Planned</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🏰</span>
+                  <div>
+                    <div style="font-weight:700;">Fort Aguada 17th-Century Lighthouse Tour</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">04:00 PM • Historic Portuguese Fort</div>
+                  </div>
+                </div>
+                <span class="badge badge-info">Planned</span>
+              </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="timeline-node">
+              <div class="timeline-dot"></div>
+              <div class="timeline-day-header">
+                <span>Day 3 • Heritage Churches & Movie Night</span>
+                <span class="badge badge-primary" style="font-size:0.7rem;">17 Oct</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">⛪</span>
+                  <div>
+                    <div style="font-weight:700;">Old Goa Basilica of Bom Jesus (UNESCO)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">11:00 AM • Portuguese Architecture</div>
+                  </div>
+                </div>
+                <span class="badge badge-info">Planned</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🎬</span>
+                  <div>
+                    <div style="font-weight:700;">Movie: Starlight: Beyond Earth (3D IMAX)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">06:15 PM • CineGenie Screen 1</div>
+                  </div>
+                </div>
+                <span class="badge badge-success">Booked</span>
+              </div>
+            </div>
+
+            <!-- Day 4 & 5 -->
+            <div class="timeline-node">
+              <div class="timeline-dot"></div>
+              <div class="timeline-day-header">
+                <span>Day 4 & 5 • Spice Farm & Return Journey</span>
+                <span class="badge badge-primary" style="font-size:0.7rem;">18 - 19 Oct</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">🌴</span>
+                  <div>
+                    <div style="font-weight:700;">Sahakari Spice Farm Tour & Buffet Lunch</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">Day 4, 12:00 PM • Traditional Goan Feast</div>
+                  </div>
+                </div>
+                <span class="badge badge-info">Planned</span>
+              </div>
+              <div class="timeline-activity-card">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.4rem;">✈️</span>
+                  <div>
+                    <div style="font-weight:700;">Return Flight (GOI → DEL)</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">Day 5, 04:00 PM • Airport Drop via Genie Cab</div>
+                  </div>
+                </div>
+                <span class="badge badge-success">Confirmed</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Budget Breakdown & Smart Packing Checklist -->
+        <div>
+          <!-- Budget Breakdown -->
+          <div class="glass-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+            <h4 style="font-size:1.15rem; font-weight:800; margin-bottom:1rem;">💰 Estimated Trip Budget</h4>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.9rem;">
+              <span style="color:var(--text-secondary);">✈️ Flights (Return)</span>
+              <strong>₹8,598</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.9rem;">
+              <span style="color:var(--text-secondary);">🏨 Resort (4 Nights)</span>
+              <strong>₹10,497</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.9rem;">
+              <span style="color:var(--text-secondary);">🚕 Local Cabs & Rides</span>
+              <strong>₹1,200</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.9rem;">
+              <span style="color:var(--text-secondary);">🍜 Food & Dining</span>
+              <strong>₹3,500</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.9rem;">
+              <span style="color:var(--text-secondary);">🛡️ Travel Protection</span>
+              <strong>₹299</strong>
+            </div>
+
+            <hr style="border:0; border-top:1px solid var(--border-color); margin:0.85rem 0;" />
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700;">Total Estimated:</span>
+              <strong style="font-size:1.4rem; color:var(--primary-purple);">₹24,094</strong>
+            </div>
+          </div>
+
+          <!-- Smart Packing Checklist -->
+          <div class="glass-card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h4 style="font-size:1.15rem; font-weight:800;">🎒 Packing Checklist</h4>
+              <span style="font-size:0.75rem; color:var(--text-muted);" id="checklistCount">4/7 packed</span>
+            </div>
+
+            <div id="packingListContainer" style="display:flex; flex-direction:column; gap:0.65rem;">
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" checked onchange="updateChecklistProgress()" />
+                <span>Government ID (Aadhaar / Passport)</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" checked onchange="updateChecklistProgress()" />
+                <span>E-Tickets saved on TRIP GENIE</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" checked onchange="updateChecklistProgress()" />
+                <span>Offline Maps Downloaded in TRIP MAP</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" checked onchange="updateChecklistProgress()" />
+                <span>Powerbank (10,000 mAh) & Charger</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" onchange="updateChecklistProgress()" />
+                <span>UV Sunglasses & SPF 50+ Sunscreen</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" onchange="updateChecklistProgress()" />
+                <span>Beachwear & Cotton Outfits</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; cursor:pointer;">
+                <input type="checkbox" onchange="updateChecklistProgress()" />
+                <span>Personal Medical Kit & Band-aids</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Custom Activity Modal -->
+  <div id="addActivityModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="document.getElementById('addActivityModal').classList.remove('active')">✕</button>
+      <h3 style="font-size:1.3rem; margin-bottom:1rem;">Add Custom Activity to Itinerary</h3>
+      <form onsubmit="handleAddActivity(event)">
+        <div style="margin-bottom:1rem;">
+          <label class="input-label">Select Day</label>
+          <div class="input-field-wrapper">
+            <select id="actDay">
+              <option>Day 1 (15 Oct)</option>
+              <option>Day 2 (16 Oct)</option>
+              <option>Day 3 (17 Oct)</option>
+              <option>Day 4 (18 Oct)</option>
+              <option>Day 5 (19 Oct)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="input-label">Activity Title</label>
+          <div class="input-field-wrapper">
+            <input type="text" id="actTitle" placeholder="e.g. Scuba diving, Sunset cruise" required />
+          </div>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <label class="input-label">Time & Notes</label>
+          <div class="input-field-wrapper">
+            <input type="text" id="actNotes" placeholder="e.g. 05:00 PM at Anjuna Beach" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Add to Schedule</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SOS Modals -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">Trigger sirens and transmit GPS coordinates to 112.</p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Floating Genie AI -->
+  <button id="floatingGenieBtn" class="floating-genie-btn"><span>✨</span> <span>Ask Genie</span></button>
+  <div id="genieChatWindow" class="genie-chat-window">
+    <div class="chat-header">
+      <div class="chat-header-info"><div class="chat-avatar">🧞</div><div><div class="chat-title">Genie AI Copilot</div><div class="chat-status"><span class="status-dot-green"></span> Online</div></div></div>
+      <button id="chatCloseBtn" class="chat-close-btn">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages-container"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask Genie AI..." />
+      <button id="chatSendBtn" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item active"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    function updateChecklistProgress() {
+      const inputs = document.querySelectorAll('#packingListContainer input[type="checkbox"]');
+      const checked = Array.from(inputs).filter(i => i.checked).length;
+      document.getElementById('checklistCount').textContent = `${checked}/${inputs.length} packed`;
+    }
+
+    function openAddActivityModal() {
+      document.getElementById('addActivityModal').classList.add('active');
+    }
+
+    function handleAddActivity(e) {
+      e.preventDefault();
+      const title = document.getElementById('actTitle').value;
+      const notes = document.getElementById('actNotes').value;
+      const day = document.getElementById('actDay').value;
+
+      document.getElementById('addActivityModal').classList.remove('active');
+      showToast(`Added "${title}" to ${day}!`, 'success', '✨');
+    }
+
+    // Live GPS on the trip page: real coordinates + real distance to the Goa
+    // trip destination, reusing the emergency engine's geolocation helper.
+    document.addEventListener('DOMContentLoaded', () => {
+      const GOA = { lat: 15.5524, lng: 73.7516 };
+      const haversineKm = (lat1, lng1, lat2, lng2) => {
+        const R = 6371, toRad = d => d * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+        return 2 * R * Math.asin(Math.sqrt(a));
+      };
+
+      const locationPromise = (window.EmergencyEngine && EmergencyEngine.getCurrentLocation)
+        ? EmergencyEngine.getCurrentLocation()
+        : Promise.resolve({ lat: GOA.lat, lng: GOA.lng });
+
+      locationPromise.then(pos => {
+        const coordsEl = document.getElementById('tripLiveCoords');
+        const distEl = document.getElementById('tripDistanceToDest');
+        if (!coordsEl) return;
+        coordsEl.textContent = `${pos.lat.toFixed(4)}° N, ${pos.lng.toFixed(4)}° E`;
+        const d = haversineKm(pos.lat, pos.lng, GOA.lat, GOA.lng);
+        if (distEl) {
+          distEl.textContent = `Distance to Goa destination: ${d.toFixed(1)} km${d < 50 ? ' — you are basically there! 🏖️' : ''}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

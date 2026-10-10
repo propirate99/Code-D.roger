@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trip Genie | Sign In</title>
+<style>
+  :root{
+    --teal:#00d8c8;
+    --teal-d:#00b0a3;
+    --blue:#00c2ff;
+    --panel:rgba(10,17,40,.72);
+    --panel-solid:#0b1329;
+    --line:rgba(255,255,255,.16);
+    --text:#eaf0ff;
+    --muted:#9fb0cf;
+    --danger:#ff5d6c;
+    --ok:#2bd98a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",Arial,sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    background:
+      linear-gradient(rgba(9,15,36,.82),rgba(9,15,36,.86)),
+      url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2000&q=80")
+      center/cover fixed;
+    padding:24px 16px;
+  }
+
+  .wrap{width:100%;max-width:440px}
+
+  /* ---------- Brand ---------- */
+  .brand{
+    text-align:center;margin-bottom:26px;
+    animation:rise .55s ease both;
+  }
+  .brand .genie{
+    width:96px;height:96px;display:inline-block;
+    border-radius:22px;object-fit:cover;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    filter:drop-shadow(0 0 16px rgba(0,216,200,.45));
+  }
+  .brand h1{
+    margin-top:8px;font-family:Georgia,"Times New Roman",serif;
+    font-size:30px;letter-spacing:3px;font-weight:800;
+    background:linear-gradient(90deg,#fff,#00d8c8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand p{color:var(--muted);font-size:13px;letter-spacing:1.4px;margin-top:6px}
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:30px 30px 26px;
+    box-shadow:0 25px 60px rgba(0,0,0,.45);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    animation:rise .55s ease .08s both;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs{
+    display:grid;grid-template-columns:1fr 1fr;gap:6px;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--line);
+    border-radius:12px;padding:5px;margin-bottom:24px;
+  }
+  .tab{
+    border:0;background:transparent;color:var(--muted);
+    padding:10px;border-radius:9px;cursor:pointer;
+    font-size:14px;font-weight:600;letter-spacing:.3px;transition:.2s;
+  }
+  .tab.active{
+    background:linear-gradient(90deg,var(--teal),var(--blue));
+    color:#04121c;box-shadow:0 6px 16px rgba(0,216,200,.35);
+  }
+  .tab:not(.active):hover{color:#fff}
+
+  /* ---------- Fields ---------- */
+  .group{margin-bottom:16px}
+  label{display:block;font-size:13px;margin-bottom:7px;color:#c6d2ea}
+  .box{position:relative}
+  .box .ico{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:var(--teal);font-size:15px;pointer-events:none;
+  }
+  .box input{
+    width:100%;height:48px;padding:0 44px;
+    border-radius:10px;border:1px solid var(--line);
+    background:rgba(255,255,255,.07);color:#fff;
+    font-size:15px;outline:none;transition:.18s;
+  }
+  .box input::placeholder{color:#7d8cac}
+  .box input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,216,200,.18);background:rgba(255,255,255,.1)}
+  .eye{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    background:transparent;border:0;cursor:pointer;font-size:17px;padding:6px;
+  }
+  .err{display:block;color:var(--danger);font-size:12.5px;min-height:16px;margin-top:5px;opacity:0;transition:opacity .2s}
+  .err.show{opacity:1}
+
+  /* ---------- Submit ---------- */
+  .submit{
+    width:100%;height:50px;margin-top:6px;border:0;cursor:pointer;
+    border-radius:10px;font-size:15px;font-weight:700;letter-spacing:.4px;color:#04121c;
+    background:linear-gradient(90deg,var(--teal),var(--blue));
+    box-shadow:0 8px 22px rgba(0,216,200,.32);
+    transition:transform .15s,box-shadow .2s,opacity .2s;
+  }
+  .submit:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(0,216,200,.42)}
+  .submit:active{transform:translateY(0)}
+  .submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+  .bottom{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px}
+  .bottom a{color:var(--blue);text-decoration:none}
+  .bottom a:hover{text-decoration:underline}
+  .hint{color:var(--muted)}
+  .switch-txt{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+  .switch-txt a{color:var(--teal);font-weight:600;text-decoration:none;cursor:pointer}
+
+  /* ---------- Server / general message ---------- */
+  .msg{
+    display:none;margin-bottom:16px;padding:11px 13px;border-radius:10px;
+    font-size:13.5px;line-height:1.45;
+  }
+  .msg.error{display:block;background:rgba(255,93,108,.14);border:1px solid rgba(255,93,108,.4);color:#ffc7cd}
+  .msg.ok{display:block;background:rgba(43,217,138,.14);border:1px solid rgba(43,217,138,.4);color:#c3f3d9}
+
+  /* ---------- Hidden form ---------- */
+  .hide{display:none!important}
+
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  @media(max-width:480px){
+    .card{padding:24px 20px}
+    .brand h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <img class="genie" src="assets/tripgenie-logo.svg" alt="Trip Genie" />
+      <h1>TRIP GENIE</h1>
+      <p>Your Journey. One Genie.</p>
+    </div>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" id="tabLogin">Sign In</button>
+        <button type="button" class="tab" id="tabRegister">Create Account</button>
+      </div>
+
+      <div id="toggle-msg" class="msg"></div>
+
+      <!-- ============ LOGIN FORM ============ -->
+      <form id="loginForm" novalidate>
+        <div class="group">
+          <label for="loginEmail">Email</label>
+          <div class="box">
+            <span class="ico">📧</span>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <span class="err" id="le"></span>
+        </div>
+
+        <div class="group">
+          <label for="loginPassword">Password</label>
+          <div class="box">
+            <span class="ico">🔒</span>
+            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="eye" id="eyeLogin" aria-label="Toggle password visibility">👁️</button>
+          </div>
+          <span class="err" id="lp"></span>
+        </div>
+
+        <button type="submit" class="submit" id="loginBtn">Sign In</button>
+
+        <div class="bottom">
+          <span class="hint">New to Trip Genie?</span>
+          <a href="#" id="forgot">Forgot password?</a>
+        </div>
+        <p class="switch-txt">Don&rsquo;t have an account? <a id="gotoRegister">Create one</a></p>
+      </form>
+
+      <!-- ============ REGISTER FORM ============ -->
+      <form id="registerForm" novalidate class="hide">
+        <div class="group">
+          <label for="regName">Full Name</label>
+          <div class="box">
+            <span class="ico">👤</span>
+            <input type="text" id="regName" placeholder="Your full name" autocomplete="name" required>
+          </div>
+          <span class="err" id="rn"></span>
+        </div>
+
+        <div class="group">
+          <label for="regEmail">Email</label>
+          <div class="box">
+            <span class="ico">📧</span>
+            <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <span class="err" id="re"></span>
+        </div>
+
+        <div class="group">
+          <label for="regPhone">Phone <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+          <div class="box">
+            <span class="ico">📱</span>
+            <input type="tel" id="regPhone" placeholder="+91 98765 43210" autocomplete="tel">
+          </div>
+          <span class="err" id="rph"></span>
+        </div>
+
+        <div class="group">
+          <label for="regPassword">Password</label>
+          <div class="box">
+            <span class="ico">🔒</span>
+            <input type="password" id="regPassword" placeholder="At least 6 characters" autocomplete="new-password" required>
+            <button type="button" class="eye" id="eyeRegister" aria-label="Toggle password visibility">👁️</button>
+          </div>
+          <span class="err" id="rp"></span>
+        </div>
+
+        <div class="group">
+          <label for="regConfirm">Confirm Password</label>
+          <div class="box">
+            <span class="ico">🔐</span>
+            <input type="password" id="regConfirm" placeholder="Re-enter password" autocomplete="new-password" required>
+          </div>
+          <span class="err" id="rc"></span>
+        </div>
+
+        <button type="submit" class="submit" id="registerBtn">Create Account</button>
+        <p class="switch-txt">Already have an account? <a id="gotoLogin">Sign in</a></p>
+      </form>
+    </div>
+
+    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:18px">
+      🔐 Secured with PBKDF2-HMAC-SHA256 &amp; session tokens
+    </p>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SESSION_KEY = "trip_genie_session";
+  // The REST API + database are served by the Python backend on port 8000.
+  // If this page is opened through a static-only server (e.g. Live Server on 5500),
+  // route API calls to the backend; it returns CORS headers so cross-origin works.
+  // window.location.hostname is empty when the page is opened via file://
+  // (e.g. double-clicking the HTML instead of running `python server.py`).
+  // Without this fallback the URL becomes "http://:8000" (invalid) and every
+  // login/register request is rejected before it is even sent.
+  var host = window.location.hostname || "localhost";
+  var API_BASE = "http://" + host + ":8000";
+  var API_LOGIN = API_BASE + "/api/auth/login";
+  var API_REGISTER = API_BASE + "/api/auth/register";
+
+  var tabLogin = document.getElementById("tabLogin");
+  var tabRegister = document.getElementById("tabRegister");
+  var loginForm = document.getElementById("loginForm");
+  var registerForm = document.getElementById("registerForm");
+  var msgBox = document.getElementById("toggle-msg");
+
+  /* ---------- helpers ---------- */
+  function showMsg(text, type) {
+    msgBox.textContent = text;
+    msgBox.className = "msg " + (type || "error");
+  }
+  function clearMsg() { msgBox.className = "msg"; msgBox.textContent = ""; }
+  function setErr(id, text) {
+    var el = document.getElementById(id);
+    el.textContent = text || "";
+    el.classList.toggle("show", !!text);
+  }
+  function switchTab(showRegister) {
+    clearMsg();
+    tabLogin.classList.toggle("active", !showRegister);
+    tabRegister.classList.toggle("active", showRegister);
+    loginForm.classList.toggle("hide", showRegister);
+    registerForm.classList.toggle("hide", !showRegister);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // If already signed in, skip straight to the app.
+  try {
+    if (localStorage.getItem(SESSION_KEY)) { window.location.replace("index.html"); }
+  } catch (e) { /* storage unavailable */ }
+
+  /* ---------- password eyes ---------- */
+  function toggleEye(eyeId, inputId) {
+    var eye = document.getElementById(eyeId);
+    var inp = document.getElementById(inputId);
+    eye.addEventListener("click", function () {
+      var show = inp.type === "password";
+      inp.type = show ? "text" : "password";
+      eye.textContent = show ? "🙈" : "👁️";
+    });
+  }
+  toggleEye("eyeLogin", "loginPassword");
+  toggleEye("eyeRegister", "regPassword");
+
+  // This page is a thin client: it needs the Trip Genie Python backend
+  // (server.py) passing the /api/* REST calls. If it is opened straight from
+  // disk (double-click, file://) or from a bare static server (e.g.
+  // `python -m http.server`) there is NO API, so any login/register request
+  // would silently fail. Detect that up front and tell the user exactly what
+  // to run, instead of finding out the hard way when they press Sign In.
+  (function checkBackend() {
+    fetch(API_BASE + "/api/health")
+      .then(function (r) { if (!r.ok) { throw new Error("backend down"); } })
+      .catch(function () {
+        var where = ("file:" === window.location.protocol)
+          ? "You opened this page directly from disk."
+          : "The backend at " + API_BASE + "/api/health is not responding.";
+        showMsg(where + " Login needs the Trip Genie server. In the project folder run: python server.py — then open http://localhost:8000", "error");
+      });
+  })();
+
+  /* ---------- tabs ---------- */
+  tabLogin.addEventListener("click", function () { switchTab(false); });
+  tabRegister.addEventListener("click", function () { switchTab(true); });
+  document.getElementById("gotoRegister").addEventListener("click", function (e) { e.preventDefault(); switchTab(true); });
+  document.getElementById("gotoLogin").addEventListener("click", function (e) { e.preventDefault(); switchTab(false); });
+
+  /* ---------- login ---------- */
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearMsg();
+    setErr("le", ""); setErr("lp", "");
+    var email = document.getElementById("loginEmail").value.trim();
+    var password = document.getElementById("loginPassword").value;
+
+    var ok = true;
+    if (!email) { setErr("le", "Please enter your email."); ok = false; }
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setErr("le", "Please enter a valid email."); ok = false; }
+    if (!password) { setErr("lp", "Please enter your password."); ok = false; }
+    if (!ok) return;
+
+    var btn = document.getElementById("loginBtn");
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+
+    fetch(API_LOGIN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: password })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { status: r.status, body: d }; }); })
+      .then(function (res) {
+        if (res.body && res.body.success) {
+          window.sessionStorage && sessionStorage.setItem("trip_genie_login", "1");
+          localStorage.setItem(SESSION_KEY, JSON.stringify({
+            token: res.body.token,
+            user: res.body.user,
+            email: email,
+            loginAt: Date.now()
+          }));
+          window.location.replace("index.html");
+        } else {
+          var msg = (res.body && res.body.error) || "Login failed. Please try again.";
+          if (res.status === 401) { setErr("lp", "Invalid email or password."); }
+          else if (res.status === 403) { setErr("lp", "This account has been suspended."); }
+          else { setErr("le", msg); }
+        }
+      })
+      .catch(function () {
+        showMsg("Could not reach the backend. Start it with: python server.py — then open http://localhost:8000", "error");
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+      });
+  });
+
+  /* ---------- register ---------- */
+  registerForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearMsg();
+    ["rn","re","rph","rp","rc"].forEach(function (id) { setErr(id, ""); });
+
+    var name = document.getElementById("regName").value.trim();
+    var email = document.getElementById("regEmail").value.trim();
+    var phone = document.getElementById("regPhone").value.trim();
+    var password = document.getElementById("regPassword").value;
+    var confirm = document.getElementById("regConfirm").value;
+
+    var ok = true;
+    if (!name) { setErr("rn", "Please enter your full name."); ok = false; }
+    if (!email) { setErr("re", "Please enter your email."); ok = false; }
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setErr("re", "Please enter a valid email."); ok = false; }
+    if (!password) { setErr("rp", "Please create a password."); ok = false; }
+    else if (password.length < 6) { setErr("rp", "Password must be at least 6 characters."); ok = false; }
+    if (!confirm) { setErr("rc", "Please confirm your password."); ok = false; }
+    else if (confirm !== password) { setErr("rc", "Passwords do not match."); ok = false; }
+    if (!ok) return;
+
+    var btn = document.getElementById("registerBtn");
+    btn.disabled = true;
+    btn.textContent = "Creating account…";
+
+    fetch(API_REGISTER, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name, email: email, phone: phone, password: password })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { status: r.status, body: d }; }); })
+      .then(function (res) {
+        if (res.body && res.body.success) {
+          localStorage.setItem(SESSION_KEY, JSON.stringify({
+            token: res.body.token,
+            user: res.body.user,
+            email: email,
+            loginAt: Date.now()
+          }));
+          showMsg("Account created! Taking you to your trip dashboard…", "ok");
+          setTimeout(function () { window.location.replace("index.html"); }, 900);
+        } else {
+          var msg = (res.body && res.body.error) || "Registration failed. Please try again.";
+          showMsg(msg, "error");
+          if (res.status === 409) { setErr("re", msg); }
+        }
+      })
+      .catch(function () {
+        showMsg("Could not reach the backend. Start it with: python server.py — then open http://localhost:8000", "error");
+      })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Create Account";
+      });
+  });
+
+  /* ---------- forgot ---------- */
+  document.getElementById("forgot").addEventListener("click", function (e) {
+    e.preventDefault();
+    showMsg("Password reset is not available yet. Please contact Trip Genie support.", "error");
+  });
+})();
+</script>
+</body>
+</html>

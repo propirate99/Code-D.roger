@@ -1,0 +1,5 @@
+HEALTH status=200 body={"status": "healthy", "service": "TRIP GENIE API", "version": "1.0.0"}
+SOS status=200 body={"success": true, "message": "Emergency SOS broadcast received by server", "telemetry": {"timestamp": "2026-09-02T20:45:00Z", "status": "DISTRESS_SIGNAL_ACTIVE"
+OSRM status=200 distance_m=11112 duration_s=899 geom_pts=347
+OVERPASS [overpass.kumi.systems] ERR=The read operation timed out
+OVERPASS [overpass-api.de] HTTPError=406

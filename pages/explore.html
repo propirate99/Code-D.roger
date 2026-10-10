@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Destinations — TRIP GENIE</title>
+  <meta name="description" content="Discover top travel destinations across India with curated itineraries, ratings, and instant booking." />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link active"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo">
+        <div class="brand-logo-icon">🧞</div>
+        <span>TRIP GENIE</span>
+      </div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link active"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link"><i class="fas fa-map-marked-alt"></i> Maps</a>
+      <a href="genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie</a>
+      <a href="emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a>
+      <a href="profile.html" class="drawer-link"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Page Header -->
+      <div style="text-align:center; max-width:700px; margin:0 auto 2.5rem;">
+        <span class="badge badge-primary" style="margin-bottom:0.75rem;">🌍 Destination Discovery</span>
+        <h1 style="font-size:2.6rem; font-weight:900; margin-bottom:0.5rem;">Explore Incredible Destinations</h1>
+        <p style="color:var(--text-secondary); font-size:1.05rem;">
+          Discover sun-kissed beaches, snowy peaks, ancient palaces, and cultural wonders with instant Genie AI itineraries.
+        </p>
+      </div>
+
+      <!-- Hidden Gems Spotlight Banner -->
+      <div class="glass-card hidden-gems-banner" style="padding:1.25rem 1.5rem; margin-bottom:1.5rem; background:linear-gradient(120deg, rgba(155,89,182,0.28), rgba(45,212,191,0.22)); border:1px solid rgba(155,89,182,0.35);">
+        <div style="display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap;">
+          <div style="flex:1; min-width:240px;">
+            <span class="badge badge-primary" style="margin-bottom:0.4rem;">🧞 Hidden Gems of India</span>
+            <h3 style="font-size:1.35rem; font-weight:800; margin:0.35rem 0 0.4rem;">Journey Beyond the Ordinary</h3>
+            <p style="color:var(--text-secondary); margin:0 0 0.9rem; font-size:0.95rem;">
+              Misty Coorg, Hampi's boulder ruins, the frozen Zanskar trek, Spiti's monasteries, and 30+ offbeat escapes — deep-tier Karnataka and India's best-kept secrets.
+            </p>
+            <button class="btn btn-primary" onclick="setCategoryFilter('Hidden Gems', document.getElementById('chipHiddenGems'))">
+              <i class="fas fa-compass"></i> Explore Hidden Gems
+            </button>
+          </div>
+          <div style="font-size:4rem; line-height:1; opacity:0.9;">✨</div>
+        </div>
+      </div>
+
+      <!-- Search & Filters Bar -->
+      <div class="glass-card" style="padding:1rem 1.5rem; margin-bottom:2rem;">
+        <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+          <div style="flex:1; min-width:260px;" class="input-field-wrapper">
+            <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+            <input type="text" id="exploreSearchInput" placeholder="Search by city, state, or activity (e.g. Scuba, Snow, Temples)..." oninput="filterDestinations()" />
+          </div>
+          <div style="display:flex; gap:0.5rem; overflow-x:auto;">
+            <button class="filter-chip active" onclick="setCategoryFilter('All', this)">All</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Beaches', this)">🏖️ Beaches</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Mountains', this)">🏔️ Mountains</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Historical', this)">🏰 Historical</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Adventure', this)">🧗 Adventure</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Family', this)">👨‍👩‍👧 Family</button>
+            <button class="filter-chip" onclick="setCategoryFilter('Romantic', this)">💑 Romantic</button>
+            <button class="filter-chip" id="chipHiddenGems" onclick="setCategoryFilter('Hidden Gems', this)">✨ Hidden Gems</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Destinations Grid -->
+      <div class="destinations-grid" id="exploreGrid">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Destination Detail Modal -->
+  <div id="destDetailModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card" style="max-width:680px; padding:0; overflow:hidden;">
+      <button class="modal-close-btn" style="z-index:10; background:rgba(0,0,0,0.5); color:#fff;" onclick="document.getElementById('destDetailModal').classList.remove('active')">✕</button>
+      <div id="destDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- Floating Genie AI Button -->
+  <button id="floatingGenieBtn" class="floating-genie-btn">
+    <span>✨</span> <span>Ask Genie</span>
+  </button>
+
+  <div id="genieChatWindow" class="genie-chat-window">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="chat-avatar">🧞</div>
+        <div>
+          <div class="chat-title">Genie AI Copilot</div>
+          <div class="chat-status"><span class="status-dot-green"></span> Online</div>
+        </div>
+      </div>
+      <button id="chatCloseBtn" class="chat-close-btn">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages-container"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask Genie AI..." />
+      <button id="chatSendBtn" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item active"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <!-- SOS Modals -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        This will trigger emergency sirens, transmit live GPS coordinates to contacts, and dial 112.
+      </p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <script src="../js/mock-data.js?v=20260902"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    let activeCategory = 'All';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('cat');
+      const searchParam = urlParams.get('search');
+      const destParam = urlParams.get('dest');
+
+      if (catParam) {
+        activeCategory = catParam;
+        document.querySelectorAll('.filter-chip').forEach(c => {
+          if (c.textContent.includes(catParam)) {
+            document.querySelectorAll('.filter-chip').forEach(x => x.classList.remove('active'));
+            c.classList.add('active');
+          }
+        });
+      }
+
+      if (searchParam) {
+        const input = document.getElementById('exploreSearchInput');
+        if (input) input.value = searchParam;
+      }
+
+      renderExploreDestinations();
+
+      if (destParam) {
+        openDestDetail(destParam);
+      }
+    });
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      filterDestinations();
+    }
+
+    function filterDestinations() {
+      const query = (document.getElementById('exploreSearchInput').value || '').toLowerCase().trim();
+      renderExploreDestinations(query, activeCategory);
+    }
+
+    function renderExploreDestinations(query = '', category = 'All') {
+      const grid = document.getElementById('exploreGrid');
+      if (!grid || !window.TRIP_GENIE_DATA) return;
+
+      grid.innerHTML = '';
+      const list = window.TRIP_GENIE_DATA.destinations.filter(d => {
+        const matchesCat = (category === 'All' || d.category.toLowerCase() === category.toLowerCase());
+        const matchesQuery = (!query || d.name.toLowerCase().includes(query) || d.state.toLowerCase().includes(query) || d.description.toLowerCase().includes(query));
+        return matchesCat && matchesQuery;
+      });
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted);">No destinations found matching your criteria.</div>`;
+        return;
+      }
+
+      list.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'dest-card';
+        card.innerHTML = `
+          <div class="dest-img-box" onclick="openDestDetail('${d.id}')">
+            <img src="${d.image}" alt="${d.name}" loading="lazy" />
+            <div class="dest-badge-top">${d.tag}</div>
+            <button class="dest-fav-btn" onclick="event.stopPropagation(); this.classList.toggle('active'); showToast(this.classList.contains('active') ? 'Saved to Wishlist ❤️' : 'Removed from Wishlist', 'info')"><i class="fas fa-heart"></i></button>
+          </div>
+          <div class="dest-body">
+            <div class="dest-meta">
+              <h3 class="dest-title">${d.name}</h3>
+              <div class="dest-rating">⭐ ${d.rating}</div>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem;"><i class="fas fa-map-marker-alt"></i> ${d.state}</div>
+            <p class="dest-desc">${d.description}</p>
+            <div class="dest-footer">
+              <div class="dest-price">₹${d.startingPrice.toLocaleString('en-IN')} <span>/ person</span></div>
+              <button onclick="openDestDetail('${d.id}')" class="btn btn-primary btn-sm">Explore Details</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openDestDetail(destId) {
+      const d = window.TRIP_GENIE_DATA.destinations.find(x => x.id === destId);
+      if (!d) return;
+
+      const modal = document.getElementById('destDetailModal');
+      const content = document.getElementById('destDetailContent');
+      if (!modal || !content) return;
+
+      content.innerHTML = `
+        <div style="position:relative; height:240px;">
+          <img src="${d.image}" alt="${d.name}" style="width:100%; height:100%; object-fit:cover;" />
+          <div style="position:absolute; bottom:0; left:0; right:0; padding:1.5rem; background:linear-gradient(to top, rgba(10,17,40,0.9), transparent); color:#fff;">
+            <span class="badge badge-primary">${d.category}</span>
+            <h2 style="font-size:1.8rem; font-weight:900; color:#fff; margin-top:0.25rem;">${d.name}</h2>
+            <div style="font-size:0.85rem; color:#CBD5E1;">${d.state} • Best Season: ${d.bestTime}</div>
+          </div>
+        </div>
+        <div style="padding:1.5rem;">
+          <h4 style="font-size:1rem; margin-bottom:0.5rem;">About Destination</h4>
+          <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:1.25rem;">${d.description}</p>
+          
+          <h4 style="font-size:1rem; margin-bottom:0.75rem;">Key Highlights & Sightseeing</h4>
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem;">
+            ${d.highlights.map(h => `<span class="badge badge-info" style="font-size:0.8rem; padding:0.35rem 0.75rem;">📍 ${h}</span>`).join('')}
+          </div>
+
+          <div style="background:var(--bg-body); border-radius:var(--radius-lg); padding:1rem; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Package Starting From</div>
+              <div style="font-size:1.5rem; font-weight:800; color:var(--primary-purple);">₹${d.startingPrice.toLocaleString('en-IN')}</div>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="GenieChatbot.toggleChat(true); GenieChatbot.sendQuickPrompt('Plan a 3-day itinerary for ${d.name}'); modal.classList.remove('active');">
+                ✨ Plan with AI
+              </button>
+              <a href="services.html#travel" class="btn btn-primary btn-sm">Book Flights & Stays</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.add('active');
+    }
+  </script>
+</body>
+</html>

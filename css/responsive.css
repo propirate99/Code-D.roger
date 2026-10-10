@@ -1,0 +1,311 @@
+/* ==========================================================================
+   TRIP GENIE - RESPONSIVE DESIGN & MOBILE BAR
+   ========================================================================== */
+
+/* --- Mobile Bottom Navigation Bar --- */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-glass);
+  z-index: 1500;
+  box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.08);
+}
+
+.mobile-nav-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  padding: 0 0.5rem;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  position: relative;
+}
+
+.mobile-nav-item i, .mobile-nav-item svg {
+  font-size: 1.25rem;
+  transition: transform var(--transition-fast);
+}
+
+.mobile-nav-item.active {
+  color: var(--primary-purple);
+}
+
+[data-theme="dark"] .mobile-nav-item.active {
+  color: #C084FC;
+}
+
+.mobile-nav-item.active i {
+  transform: translateY(-2px);
+}
+
+/* Central Genie / SOS Mobile Highlight */
+.mobile-nav-sos {
+  background: var(--grad-sos);
+  color: #fff !important;
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin-top: -16px;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+  animation: sosRadar 2s infinite;
+}
+
+.mobile-nav-sos span {
+  display: none;
+}
+
+/* Mobile Drawer */
+.mobile-drawer-toggle {
+  display: none;
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  z-index: 2500;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-nav-drawer.active {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.drawer-link:hover, .drawer-link.active {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--primary-purple);
+}
+
+/* --- Media Queries --- */
+
+/* Laptops & Tablets (< 1024px) */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 2.85rem;
+  }
+  
+  .quick-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .trip-pay-banner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+}
+
+/* Tablets & Large Phones (< 768px) */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: var(--bottom-nav-height);
+  }
+
+  .nav-links, .btn-sos-nav-desktop {
+    display: none;
+  }
+
+  .mobile-drawer-toggle {
+    display: block;
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-section .hero-content .hero-cta-row {
+    align-items: stretch;
+    flex-direction: column !important;
+  }
+
+  .hero-section .hero-content .hero-cta-row .btn {
+    justify-content: center;
+    width: 100% !important;
+  }
+
+  .search-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .hero-search-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-search-actions button {
+    width: 100%;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .quick-services-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+
+  .service-card {
+    padding: 1.15rem;
+  }
+
+  .service-icon-box {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .service-title {
+    font-size: 1.05rem;
+  }
+
+  .floating-genie-btn {
+    bottom: 80px;
+    right: 16px;
+    height: 48px;
+    padding: 0 1rem;
+    font-size: 0.88rem;
+  }
+
+  .genie-chat-window {
+    bottom: 136px;
+    right: 16px;
+    width: calc(100vw - 32px);
+    height: 480px;
+  }
+
+  .modal-card {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    top: 16px;
+  }
+
+  .toast {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .pay-quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Small Phones (< 480px) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.85rem;
+  }
+
+  .quick-services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .destinations-grid, .stays-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-brand {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-cta-row {
+    flex-direction: column !important;
+  }
+
+  .hero-cta-row .btn {
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRIP MAP & GPS — Offline Navigation & Mesh</title>
+  <meta name="description" content="Offline interactive maps, GPS geolocation, route navigator, and offline traveler mesh communication." />
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+
+  <style>
+    #tripMapContainer {
+      width: 100%;
+      height: 520px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      z-index: 10;
+    }
+    .map-controls-floating {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .map-pill-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all var(--transition-fast);
+    }
+    .map-pill-btn:hover {
+      background: var(--primary-purple);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="genie-navbar">
+    <div class="nav-container">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <button class="mobile-drawer-toggle" onclick="toggleMobileDrawer()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-logo-icon">🧞</div>
+          <span>TRIP GENIE</span>
+        </a>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="explore.html" class="nav-link"><i class="fas fa-compass"></i> Explore</a></li>
+        <li><a href="trips.html" class="nav-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a></li>
+        <li><a href="bookings.html" class="nav-link"><i class="fas fa-ticket-alt"></i> Bookings</a></li>
+        <li><a href="services.html" class="nav-link"><i class="fas fa-th-large"></i> Services</a></li>
+        <li><a href="maps.html" class="nav-link active"><i class="fas fa-map-marked-alt"></i> Maps</a></li>
+        <li><a href="genie-ai.html" class="nav-link" style="color:var(--primary-purple);"><i class="fas fa-magic"></i> AI Genie</a></li>
+        <li><a href="emergency.html" class="nav-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn" onclick="openGlobalSearch()"><i class="fas fa-search"></i></button>
+        <button class="nav-icon-btn btn-theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="btn-sos-nav btn-sos-nav-desktop" onclick="EmergencyEngine.triggerSOSModal()">
+          <i class="fas fa-exclamation-triangle"></i> SOS
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div id="drawerOverlay" class="modal-overlay" onclick="toggleMobileDrawer()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo"><div class="brand-logo-icon">🧞</div><span>TRIP GENIE</span></div>
+      <button onclick="toggleMobileDrawer()">✕</button>
+    </div>
+    <nav class="drawer-links">
+      <a href="../index.html" class="drawer-link"><i class="fas fa-home"></i> Home</a>
+      <a href="explore.html" class="drawer-link"><i class="fas fa-compass"></i> Explore</a>
+      <a href="trips.html" class="drawer-link"><i class="fas fa-suitcase-rolling"></i> My Trip</a>
+      <a href="bookings.html" class="drawer-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+      <a href="services.html" class="drawer-link"><i class="fas fa-th-large"></i> Services</a>
+      <a href="maps.html" class="drawer-link active"><i class="fas fa-map-marked-alt"></i> Maps & GPS</a>
+      <a href="genie-ai.html" class="drawer-link"><i class="fas fa-magic"></i> AI Genie</a>
+      <a href="emergency.html" class="drawer-link" style="color:var(--sos-red);"><i class="fas fa-shield-alt"></i> Emergency</a>
+      <a href="profile.html" class="drawer-link"><i class="fas fa-user"></i> Profile</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Top Telemetry Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="badge badge-info" id="gpsStatusLabel">
+            <span class="status-dot-green"></span> Checking GPS...
+          </span>
+          <h1 style="font-size:2.2rem; font-weight:900; margin-top:0.25rem;">TRIP MAP & Navigation</h1>
+          <p style="color:var(--text-secondary); font-size:0.9rem;">
+            Coordinates: <strong id="gpsCoordsLabel" style="font-family:monospace; color:var(--primary-purple);">Locating your position…</strong>
+          </p>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="TripMapEngine.centerUserLocation()">
+            📍 My Location
+          </button>
+          <button class="btn btn-secondary btn-sm" id="liveGpsBtn" onclick="TripMapEngine.toggleLiveTracking()">
+            🔴 Live GPS
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="TripMapEngine.refreshRealNearby()">
+            🔄 Refresh Nearby Places
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('offlineModal').classList.add('active')">
+            💾 Offline Map Packs
+          </button>
+        </div>
+      </div>
+
+      <!-- POI Filter Chips -->
+      <div class="filters-bar" style="margin-bottom:1rem;">
+        <button class="filter-chip active" onclick="filterMapPOI('all', this)">All Layers</button>
+        <button class="filter-chip" onclick="filterMapPOI('spot', this)">🏖️ Attractions</button>
+        <button class="filter-chip" onclick="filterMapPOI('food', this)">🍜 Food & Cafes</button>
+        <button class="filter-chip" onclick="filterMapPOI('fuel', this)">⛽ Fuel & EV</button>
+        <button class="filter-chip" onclick="filterMapPOI('hospital', this)">🏥 Hospitals (24/7)</button>
+      </div>
+
+      <!-- Map Container Relative Box -->
+      <div style="position:relative; margin-bottom:2.5rem;">
+        <div id="tripMapContainer"></div>
+      </div>
+
+      <!-- Real Nearby Places Panel -->
+      <div class="glass-card" style="padding:1.5rem; margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">
+          <div>
+            <span class="badge badge-info">📍 NEARBY (REAL)</span>
+            <h3 style="font-size:1.3rem; font-weight:800; margin-top:0.25rem;">Places around your location</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Fetched live from OpenStreetMap, sorted by distance from you</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="TripMapEngine.refreshRealNearby()">🔄 Refresh</button>
+        </div>
+        <div id="realNearbyList"></div>
+      </div>
+
+      <!-- TRIP CONNECT: Offline Mesh Simulation Section -->
+      <div class="glass-card" style="padding:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <span class="badge badge-success">📡 OFFLINE BLUETOOTH MESH (TRIP CONNECT)</span>
+            <h3 style="font-size:1.4rem; font-weight:800; margin-top:0.25rem;">Nearby Travelers Radar</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">Direct node-to-node communication without mobile data or internet</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Scanning 2.4GHz & BLE Mesh nodes... 5 Travelers Found', 'info', '📡')">
+            🔄 Rescan Radar
+          </button>
+        </div>
+
+        <!-- Peer Nodes List -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;" id="meshPeersGrid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Offline Map Download Modal -->
+  <div id="offlineModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card" style="max-width:560px;">
+      <button class="modal-close-btn" onclick="document.getElementById('offlineModal').classList.remove('active')">✕</button>
+      <h3 style="font-size:1.3rem; font-weight:800; margin-bottom:0.5rem;">Offline Map Packs</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">
+        Download complete region vector maps, POIs, and turn-by-turn routes for zero-connectivity valleys and flights.
+      </p>
+      <div id="offlinePacksList"></div>
+    </div>
+  </div>
+
+  <!-- Mesh Chat Modal -->
+  <div id="meshChatModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('active')">
+    <div class="modal-card" style="max-width:440px;">
+      <button class="modal-close-btn" onclick="document.getElementById('meshChatModal').classList.remove('active')">✕</button>
+      <h3 id="meshChatPeerName" style="font-size:1.2rem; font-weight:800; margin-bottom:0.25rem;">Direct Offline Chat</h3>
+      <div style="font-size:0.75rem; color:var(--accent-green); margin-bottom:1rem;">● Direct BLE Mesh Connected (Zero Internet)</div>
+      
+      <div id="meshChatMsgs" style="height:220px; overflow-y:auto; background:var(--bg-body); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+        <div class="chat-msg chat-msg-bot">👋 Hi there! I'm nearby at Baga Beach Shack. Are you also traveling with TRIP GENIE?</div>
+      </div>
+
+      <div style="display:flex; gap:0.5rem;">
+        <input type="text" id="meshChatInput" class="input-field-wrapper" style="flex:1;" placeholder="Type mesh message..." />
+        <button class="btn btn-primary" onclick="sendMeshMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOS Modals -->
+  <div id="sosConfirmModal" class="modal-overlay" onclick="if(event.target===this) EmergencyEngine.closeSOSModal()">
+    <div class="modal-card" style="text-align:center; max-width:440px; border:2px solid var(--sos-red);">
+      <div style="font-size:3rem; margin-bottom:0.75rem; color:var(--sos-red);">🚨</div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:var(--sos-red); margin-bottom:0.5rem;">Activate Emergency SOS?</h3>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1.5rem;">Trigger sirens and transmit GPS coordinates to 112.</p>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-secondary btn-full" onclick="EmergencyEngine.closeSOSModal()">Cancel</button>
+        <button class="btn btn-danger btn-full" onclick="EmergencyEngine.startCountdown()">Activate SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sosCountdownModal" class="modal-overlay">
+    <div class="modal-card" style="text-align:center; max-width:380px; border:3px solid var(--sos-red);">
+      <h3 style="color:var(--sos-red);">ACTIVATING SOS IN</h3>
+      <div id="sosCountdownVal" style="font-size:4.5rem; font-weight:900; color:var(--sos-red);">3</div>
+      <button class="btn btn-secondary btn-full btn-lg" onclick="EmergencyEngine.cancelCountdown()">🛑 Cancel SOS</button>
+    </div>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div id="globalSearchModal" class="modal-overlay" onclick="if(event.target===this) closeGlobalSearch()">
+    <div class="modal-card search-modal-card">
+      <button class="modal-close-btn" onclick="closeGlobalSearch()">✕</button>
+      <div class="global-search-input-box">
+        <i class="fas fa-search" style="color:var(--primary-purple);"></i>
+        <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Search anything..." />
+      </div>
+      <div id="globalSearchResults" class="search-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Floating Genie AI -->
+  <button id="floatingGenieBtn" class="floating-genie-btn"><span>✨</span> <span>Ask Genie</span></button>
+  <div id="genieChatWindow" class="genie-chat-window">
+    <div class="chat-header">
+      <div class="chat-header-info"><div class="chat-avatar">🧞</div><div><div class="chat-title">Genie AI Copilot</div><div class="chat-status"><span class="status-dot-green"></span> Online</div></div></div>
+      <button id="chatCloseBtn" class="chat-close-btn">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages-container"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask Genie AI..." />
+      <button id="chatSendBtn" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="../index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="explore.html" class="mobile-nav-item"><i class="fas fa-compass"></i><span>Explore</span></a>
+      <button class="mobile-nav-item mobile-nav-sos" onclick="EmergencyEngine.triggerSOSModal()"><i class="fas fa-exclamation-triangle"></i></button>
+      <a href="trips.html" class="mobile-nav-item"><i class="fas fa-suitcase-rolling"></i><span>My Trip</span></a>
+      <a href="profile.html" class="mobile-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+  </nav>
+
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/language.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/maps.js"></script>
+  <script src="../js/emergency.js"></script>
+  <script src="../js/bookings.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      TripMapEngine.init('tripMapContainer');
+      renderMeshPeers();
+    });
+
+    function filterMapPOI(type, btn) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      TripMapEngine.filterLayer(type);
+    }
+
+    function renderMeshPeers() {
+      const grid = document.getElementById('meshPeersGrid');
+      if (!grid || !window.TRIP_GENIE_DATA) return;
+
+      grid.innerHTML = '';
+      window.TRIP_GENIE_DATA.meshPeers.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'glass-card';
+        card.style.cssText = 'padding:1.1rem; display:flex; justify-content:space-between; align-items:center;';
+        card.innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="font-size:1.8rem;">${p.avatar}</div>
+            <div>
+              <div style="font-weight:700; color:var(--text-primary);">${p.name}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">${p.distance} • Signal ${p.signal}%</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openMeshChat('${p.name}')">
+            💬 Chat
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openMeshChat(name) {
+      document.getElementById('meshChatPeerName').textContent = `Mesh Chat: ${name}`;
+      document.getElementById('meshChatModal').classList.add('active');
+    }
+
+    function sendMeshMessage() {
+      const input = document.getElementById('meshChatInput');
+      const container = document.getElementById('meshChatMsgs');
+      if (!input || !input.value.trim()) return;
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-msg chat-msg-user';
+      userDiv.style.alignSelf = 'flex-end';
+      userDiv.textContent = input.value.trim();
+      container.appendChild(userDiv);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      setTimeout(() => {
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'chat-msg chat-msg-bot';
+        replyDiv.textContent = 'Received via Bluetooth Mesh! Safe travels buddy! 🌴';
+        container.appendChild(replyDiv);
+        container.scrollTop = container.scrollHeight;
+      }, 900);
+    }
+  </script>
+</body>
+</html>
